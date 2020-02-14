@@ -1,51 +1,12 @@
 
-            #version 330
-            // -- part of the filter interface, every filter has these
+            #version 330 
+            
             in vec2 v_texCoord0;
             uniform sampler2D tex0;
             out vec4 o_color;
-    
-    
-            float dX = 1.0;
-            float dY = 0.5;
-            float feed = 0.055;
-            float k = 0.062;
-            float s = 0.001;
 
-    
             void main() {
-                o_color = texture(tex0, v_texCoord0);
-                
                 vec2 spot = texture(tex0, v_texCoord0).xy;
-                
-                float x = spot.x;
-                float y = spot.y;
-                
-                float laplaceX = 0;
-                laplaceX += x*-1;
-                laplaceX += texture(tex0, v_texCoord0 + vec2(.01, 0.)).x*0.2;
-                laplaceX += texture(tex0, v_texCoord0 - vec2(.01, 0.)).x*0.2;
-                laplaceX += texture(tex0, v_texCoord0 + vec2(0., .01)).x*0.2;
-                laplaceX += texture(tex0, v_texCoord0 + vec2(0., .01)).x*0.2;
-                laplaceX += texture(tex0, v_texCoord0 + vec2(-.01, -.01)).x*0.05;
-                laplaceX += texture(tex0, v_texCoord0 + vec2(.01, -.01)).x*0.05;
-                laplaceX += texture(tex0, v_texCoord0 + vec2(-.01, .01)).x*0.05;
-                laplaceX += texture(tex0, v_texCoord0 + vec2(.01, .01)).x*0.05;
-                
-                float laplaceY = 0;
-                laplaceY += y*-1;
-                laplaceY += texture(tex0, v_texCoord0 + vec2(.01, 0.)).y*0.2;
-                laplaceY += texture(tex0, v_texCoord0 - vec2(.01, 0.)).y*0.2;
-                laplaceY += texture(tex0, v_texCoord0 + vec2(0., .01)).y*0.2;
-                laplaceY += texture(tex0, v_texCoord0 + vec2(0., .01)).y*0.2;
-                laplaceY += texture(tex0, v_texCoord0 + vec2(-.01, -.01)).y*0.05;
-                laplaceY += texture(tex0, v_texCoord0 + vec2(.01, -.01)).y*0.05;
-                laplaceY += texture(tex0, v_texCoord0 + vec2(-.01, .01)).y*0.05;
-                laplaceY += texture(tex0, v_texCoord0 + vec2(.01, .01)).y*0.05;
-                
-                o_color.x = x + (dX * laplaceX - x*y*y + feed * (1-x)) * 1;
-                o_color.y = y + (dY * laplaceY + x*y*y - (k+feed)*y)*1;
-                
-                o_color.x = clamp(o_color.x, )
+                o_color = vec4(spot);
             }
         
