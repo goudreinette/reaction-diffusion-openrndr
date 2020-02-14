@@ -3,6 +3,7 @@ import org.openrndr.Program
 import org.openrndr.color.ColorRGBa
 import org.openrndr.draw.*
 import org.openrndr.extra.fx.blur.BoxBlur
+import org.openrndr.extra.fx.blur.ApproximateGaussianBlur
 import org.openrndr.extra.fx.blur.GaussianBlur
 import kotlin.math.cos
 import kotlin.math.sin
@@ -29,7 +30,7 @@ import org.openrndr.draw.filterShaderFromCode
             
             vec3 texSample(const int x, const int y, vec2 resolution) {
                 vec2 uv = v_texCoord0.xy;
-                uv = (uv + vec2(x, y)) / resolution;
+                uv = (uv + vec2(x / (resolution.x / 2), y / (resolution.y / 2)));
                 return texture(tex0, uv).xyz;       
             } 
             
@@ -71,7 +72,7 @@ import org.openrndr.draw.filterShaderFromCode
             colorBuffer()
         }
 
-        val blur = BoxBlur()
+        val blur = ApproximateGaussianBlur()
         val noise = Noise()
         val sharpen = Sharpen()
 
@@ -87,8 +88,7 @@ import org.openrndr.draw.filterShaderFromCode
             }
 
 
-            blur.window = 5
-            blur.apply(offscreen.colorBuffer(0), offscreen.colorBuffer(0))
+//            blur.apply(offscreen.colorBuffer(0), offscreen.colorBuffer(0))
             sharpen.apply(offscreen.colorBuffer(0), offscreen.colorBuffer(0))
             drawer.image(offscreen.colorBuffer(0))
 

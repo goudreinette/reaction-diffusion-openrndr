@@ -11,7 +11,7 @@
             
             vec3 texSample(const int x, const int y, vec2 resolution) {
                 vec2 uv = v_texCoord0.xy;
-                uv = (uv + vec2(x, y));
+                uv = (uv + vec2(x, y)) / resolution;
                 return texture(tex0, uv).xyz;       
             } 
             
@@ -27,11 +27,24 @@
                 texSample(-1, 1, resolution) *  -1. +                     
                 texSample( 0, 1, resolution) *  -1. +                     
                 texSample( 1, 1, resolution) *  -1.;                                              
-                return mix(f, texture(tex0, v_texCoord0), 1);    
+                return mix(texture(tex0, v_texCoord0).xyz, f, .8);    
             }
     
             void main() {
                 vec2 resolution = textureSize(tex0, 0).xy;
+                vec2 uv = v_texCoord0/resolution;
+        
+                // Get an x-based blur amount.
+                float bias = floor(uv.x*2.0)*BIAS_FACTOR;
+            
+                // Non-blurred sample.
+                vec4 a = texture(iChannel0,uv);
+                
+                // Blurred sample.
+                vec4 b = texture(iChannel0,uv,bias);
+            
+            // Add the difference back to the original image.
+            fragColor = a + (a-b);
                 o_color = vec4(sharpenFilter(resolution), 1.0);
             }
         
