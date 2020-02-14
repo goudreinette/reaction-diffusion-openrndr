@@ -5,46 +5,47 @@
             uniform sampler2D tex0;
             out vec4 o_color;
     
-            // -- user parameters
-            uniform float strength;
     
-            
-            vec3 texSample(const int x, const int y, vec2 resolution) {
-                vec2 uv = v_texCoord0.xy;
-                uv = (uv + vec2(x, y)) / resolution;
-                return texture(tex0, uv).xyz;       
-            } 
-            
-                                                     
-            vec3 sharpenFilter(vec2 resolution){
-                vec3 f =
-                texSample(-1,-1, resolution) *  -1. +                     
-                texSample( 0,-1, resolution) *  -1. +                    
-                texSample( 1,-1, resolution) *  -1. +                      
-                texSample(-1, 0, resolution) *  -1. +                    
-                texSample( 0, 0, resolution) *   9. +                     
-                texSample( 1, 0, resolution) *  -1. +                      
-                texSample(-1, 1, resolution) *  -1. +                     
-                texSample( 0, 1, resolution) *  -1. +                     
-                texSample( 1, 1, resolution) *  -1.;                                              
-                return mix(texture(tex0, v_texCoord0).xyz, f, .8);    
-            }
+            float dX = 1.0;
+            float dY = 0.5;
+            float feed = 0.055;
+            float k = 0.062;
+            float s = 0.001;
+
     
             void main() {
-                vec2 resolution = textureSize(tex0, 0).xy;
-                vec2 uv = v_texCoord0/resolution;
-        
-                // Get an x-based blur amount.
-                float bias = floor(uv.x*2.0)*BIAS_FACTOR;
-            
-                // Non-blurred sample.
-                vec4 a = texture(iChannel0,uv);
+                o_color = texture(tex0, v_texCoord0);
                 
-                // Blurred sample.
-                vec4 b = texture(iChannel0,uv,bias);
-            
-            // Add the difference back to the original image.
-            fragColor = a + (a-b);
-                o_color = vec4(sharpenFilter(resolution), 1.0);
+                vec2 spot = texture(tex0, v_texCoord0).xy;
+                
+                float x = spot.x;
+                float y = spot.y;
+                
+                float laplaceX = 0;
+                laplaceX += x*-1;
+                laplaceX += texture(tex0, v_texCoord0 + vec2(.01, 0.)).x*0.2;
+                laplaceX += texture(tex0, v_texCoord0 - vec2(.01, 0.)).x*0.2;
+                laplaceX += texture(tex0, v_texCoord0 + vec2(0., .01)).x*0.2;
+                laplaceX += texture(tex0, v_texCoord0 + vec2(0., .01)).x*0.2;
+                laplaceX += texture(tex0, v_texCoord0 + vec2(-.01, -.01)).x*0.05;
+                laplaceX += texture(tex0, v_texCoord0 + vec2(.01, -.01)).x*0.05;
+                laplaceX += texture(tex0, v_texCoord0 + vec2(-.01, .01)).x*0.05;
+                laplaceX += texture(tex0, v_texCoord0 + vec2(.01, .01)).x*0.05;
+                
+                float laplaceY = 0;
+                laplaceY += y*-1;
+                laplaceY += texture(tex0, v_texCoord0 + vec2(.01, 0.)).y*0.2;
+                laplaceY += texture(tex0, v_texCoord0 - vec2(.01, 0.)).y*0.2;
+                laplaceY += texture(tex0, v_texCoord0 + vec2(0., .01)).y*0.2;
+                laplaceY += texture(tex0, v_texCoord0 + vec2(0., .01)).y*0.2;
+                laplaceY += texture(tex0, v_texCoord0 + vec2(-.01, -.01)).y*0.05;
+                laplaceY += texture(tex0, v_texCoord0 + vec2(.01, -.01)).y*0.05;
+                laplaceY += texture(tex0, v_texCoord0 + vec2(-.01, .01)).y*0.05;
+                laplaceY += texture(tex0, v_texCoord0 + vec2(.01, .01)).y*0.05;
+                
+                o_color.x = x + (dX * laplaceX - x*y*y + feed * (1-x)) * 1;
+                o_color.y = y + (dY * laplaceY + x*y*y - (k+feed)*y)*1;
+                
+                o_color.x = clamp(o_color.x, )
             }
         

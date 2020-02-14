@@ -2,13 +2,9 @@
 import org.openrndr.Program
 import org.openrndr.color.ColorRGBa
 import org.openrndr.draw.*
-import org.openrndr.extra.fx.blur.BoxBlur
-import org.openrndr.extra.fx.blur.ApproximateGaussianBlur
-import org.openrndr.extra.fx.blur.GaussianBlur
-import kotlin.math.cos
-import kotlin.math.sin
 import org.openrndr.draw.Filter
 import org.openrndr.draw.filterShaderFromCode
+import org.openrndr.math.Vector2
 
 /*
 |--------------------------------------------------------------------------
@@ -17,82 +13,116 @@ import org.openrndr.draw.filterShaderFromCode
 */
 { program: Program ->
     program.apply {
-        val sharpenShader = """
+        val initShader = """
+            #version 330
+            // -- part of the filter interface, every filter has these
+            in vec2 v_texCoord0;
+            uniform sampler2D tex0;
+            out vec4 o_color;
+            
+            uniform vec2 start;
+    
+            void main() {
+                o_color = vec4(vec3(0.), .1);
+                o_color.x = 1.;
+
+                if (distance(vec2(0.5), v_texCoord0) < .02) {
+                    o_color.y = 1.;
+                }
+            }
+        """
+
+        val updateShader = """
             #version 330
             // -- part of the filter interface, every filter has these
             in vec2 v_texCoord0;
             uniform sampler2D tex0;
             out vec4 o_color;
     
-            // -- user parameters
-            uniform float strength;
     
-            
-            vec3 texSample(const int x, const int y, vec2 resolution) {
-                vec2 uv = v_texCoord0.xy;
-                uv = (uv + vec2(x / (resolution.x / 2), y / (resolution.y / 2)));
-                return texture(tex0, uv).xyz;       
-            } 
-            
-                                                     
-            vec3 sharpenFilter(vec2 resolution){
-                vec3 f =
-                texSample(-1,-1, resolution) *  -1. +                     
-                texSample( 0,-1, resolution) *  -1. +                    
-                texSample( 1,-1, resolution) *  -1. +                      
-                texSample(-1, 0, resolution) *  -1. +                    
-                texSample( 0, 0, resolution) *   9. +                     
-                texSample( 1, 0, resolution) *  -1. +                      
-                texSample(-1, 1, resolution) *  -1. +                     
-                texSample( 0, 1, resolution) *  -1. +                     
-                texSample( 1, 1, resolution) *  -1.;                                              
-                return mix(texture(tex0, v_texCoord0).xyz, f, .8);    
-            }
+            float dX = 1.0;
+            float dY = 0.5;
+            float feed = 0.055;
+            float k = 0.062;
+            float s = 0.001;
+
     
             void main() {
-                vec2 resolution = textureSize(tex0, 0).xy;
-                o_color = vec4(sharpenFilter(resolution), 1.0);
+                o_color = texture(tex0, v_texCoord0);
+                
+                vec2 spot = texture(tex0, v_texCoord0).xy;
+                
+                float x = spot.x;
+                float y = spot.y;
+                
+                float laplaceX = 0;
+                laplaceX += x*-1;
+                laplaceX += texture(tex0, v_texCoord0 + vec2(s, 0.)).x*0.2;
+                laplaceX += texture(tex0, v_texCoord0 - vec2(s, 0.)).x*0.2;
+                laplaceX += texture(tex0, v_texCoord0 + vec2(0., s)).x*0.2;
+                laplaceX += texture(tex0, v_texCoord0 + vec2(0., s)).x*0.2;
+                laplaceX += texture(tex0, v_texCoord0 + vec2(-s, -s)).x*0.05;
+                laplaceX += texture(tex0, v_texCoord0 + vec2(s, -s)).x*0.05;
+                laplaceX += texture(tex0, v_texCoord0 + vec2(-s, s)).x*0.05;
+                laplaceX += texture(tex0, v_texCoord0 + vec2(s, s)).x*0.05;
+                
+                float laplaceY = 0;
+                laplaceY += y*-1;
+                laplaceY += texture(tex0, v_texCoord0 + vec2(s, 0.)).y*0.2;
+                laplaceY += texture(tex0, v_texCoord0 - vec2(s, 0.)).y*0.2;
+                laplaceY += texture(tex0, v_texCoord0 + vec2(0., s)).y*0.2;
+                laplaceY += texture(tex0, v_texCoord0 + vec2(0., s)).y*0.2;
+                laplaceY += texture(tex0, v_texCoord0 + vec2(-s, -s)).y*0.05;
+                laplaceY += texture(tex0, v_texCoord0 + vec2(s, -s)).y*0.05;
+                laplaceY += texture(tex0, v_texCoord0 + vec2(-s, s)).y*0.05;
+                laplaceY += texture(tex0, v_texCoord0 + vec2(s, s)).y*0.05;
+                
+                o_color.x = x + (dX * laplaceX - x*y*y + feed * (1-x)) * 1;
+                o_color.y = y + (dY * laplaceY + x*y*y - (k+feed)*y)*1;
+                
+                o_color.x = clamp(o_color.x, 0., 1.);
+                o_color.y = clamp(o_color.y, 0., 1.);
             }
         """
 
+        val drawShader = """
+            #version 330 
+            
+            in vec2 v_texCoord0;
+            uniform sampler2D tex0;
+            out vec4 o_color;
 
-        class Sharpen : Filter(filterShaderFromCode(sharpenShader)) {
-            var strength: Double by parameters
+            void main() {
+                o_color = texture(tex0, v_texCoord0);
+            }
+        """
+
+        class ReactionDiffusionInit: Filter(filterShaderFromCode(initShader)) {
+            var start: Vector2 by parameters
 
             init {
-                strength = 1.0
+                start = Vector2(300.0, 300.0)
             }
         }
 
+        class ReactionDiffusionUpdate: Filter(filterShaderFromCode(updateShader))
+        class ReactionDiffusionDraw: Filter(filterShaderFromCode(drawShader))
 
-        val image = loadImage("data/images/cheetah.png")
+        val init = ReactionDiffusionInit()
+        val update = ReactionDiffusionUpdate()
+        val draw = ReactionDiffusionDraw()
 
-        var lastFrame = colorBuffer(width, height)
         val offscreen = renderTarget(width, height) {
             colorBuffer()
         }
 
-        val blur = ApproximateGaussianBlur()
-        val noise = Noise()
-        val sharpen = Sharpen()
+        init.apply(offscreen.colorBuffer(0), offscreen.colorBuffer(0))
 
 
         extend {
-            // -- draw to offscreen buffer
-            drawer.isolatedWithTarget(offscreen) {
-                background(ColorRGBa.BLACK)
-                fill = ColorRGBa.PINK
-                stroke = null
-                circle(cos(seconds) * 100.0 + width / 2, sin(seconds) * 100.0 + height / 2.0, 100.0 + 100.0 * cos(seconds * 2.0))
-                image(image, 0.0, 0.0, width.toDouble(), height.toDouble())
-            }
-
-
-//            blur.apply(offscreen.colorBuffer(0), offscreen.colorBuffer(0))
-            sharpen.apply(offscreen.colorBuffer(0), offscreen.colorBuffer(0))
+            update.apply(offscreen.colorBuffer(0), offscreen.colorBuffer(0))
+            draw.apply(offscreen.colorBuffer(0), offscreen.colorBuffer(0))
             drawer.image(offscreen.colorBuffer(0))
-
-            lastFrame = offscreen.colorBuffer(0)
         }
     }
 }
