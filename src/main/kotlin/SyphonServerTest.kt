@@ -1,27 +1,27 @@
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
-import org.openrndr.draw.isolatedWithTarget
 import org.openrndr.draw.renderTarget
 import org.openrndr.internal.gl3.ColorBufferGL3
 import kotlin.math.sin
 import jsyphon.JSyphonServer
 import org.openrndr.Extension
-import org.openrndr.ExtensionStage
 import org.openrndr.Program
 import org.openrndr.draw.Drawer
 import org.openrndr.draw.RenderTarget
 
-class Syphon(val name: String = "OPENRNDR"): Extension {
+class SyphonServer(val name: String = "OPENRNDR", var target: RenderTarget? = null): Extension {
     override var enabled = true
     val server = JSyphonServer()
-    var target: RenderTarget? = null
 
 
     override fun setup(program: Program) {
         server.initWithName(name)
-        target = renderTarget(program.width, program.height) {
-            colorBuffer()
-            depthBuffer()
+
+        if (target == null) {
+            target = renderTarget(program.width, program.height) {
+                colorBuffer()
+                depthBuffer()
+            }
         }
     }
 
@@ -49,13 +49,6 @@ class Syphon(val name: String = "OPENRNDR"): Extension {
 
 
 
-
-
-
-
-
-
-
 fun main() = application {
     configure {
         width = 768
@@ -63,7 +56,7 @@ fun main() = application {
     }
 
     program {
-        extend(Syphon())
+        extend(SyphonServer())
 
         extend {
             drawer.background(ColorRGBa.RED)
