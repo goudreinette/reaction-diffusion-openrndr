@@ -13,20 +13,47 @@ import org.openrndr.draw.RenderTarget
 
 class Syphon(val name: String = "OPENRNDR"): Extension {
     override var enabled = true
+    val server = JSyphonServer()
+    var target: RenderTarget? = null
+
 
     override fun setup(program: Program) {
-        val server = JSyphonServer()
         server.initWithName(name)
+        target = renderTarget(program.width, program.height) {
+            colorBuffer()
+            depthBuffer()
+        }
+    }
+
+    override fun beforeDraw(drawer: Drawer, program: Program) {
+        target?.bind()
     }
 
     override fun afterDraw(drawer: Drawer, program: Program) {
+        target?.unbind()
+        drawer.image(target?.colorBuffer(0)!!)
+        val glBuffer = target?.colorBuffer(0) as ColorBufferGL3
 
+        // Send to Syphon
+        server.publishFrameTexture(
+            glBuffer.texture, glBuffer.target, 0, 0,
+            program.width, program.height, program.width, program.height, false
+        );
     }
 
     override fun shutdown(program: Program) {
-        // Clen
+        // Cleanup
+        server.stop()
     }
 }
+
+
+
+
+
+
+
+
 
 
 fun main() = application {
@@ -41,18 +68,6 @@ fun main() = application {
         extend {
             drawer.background(ColorRGBa.RED)
             drawer.circle(width/2.0, height/2.0, sin(seconds) * width / 2.0)
-
-//            val glBuffer = RenderTarget.active.colorBuffer(0) as ColorBufferGL3
-
-            // Send to Syphon
-//            server.publishFrameTexture(
-//                glBuffer.texture, glBuffer.target, 0, 0,
-//                width, height, width, height, false
-//            );
-        }
-
-        extend(stage = ExtensionStage.AFTER_DRAW) {
-            println(RenderTarget.active.depthBuffer)
         }
     }
 }
