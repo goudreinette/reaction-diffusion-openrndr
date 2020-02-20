@@ -1,18 +1,18 @@
-import org.openrndr.application
-import org.openrndr.color.ColorRGBa
-import org.openrndr.draw.renderTarget
-import org.openrndr.internal.gl3.ColorBufferGL3
-import kotlin.math.sin
 import jsyphon.JSyphonServer
 import org.openrndr.Extension
 import org.openrndr.Program
+import org.openrndr.application
+import org.openrndr.color.ColorRGBa
 import org.openrndr.draw.Drawer
 import org.openrndr.draw.RenderTarget
+import org.openrndr.draw.renderTarget
+import org.openrndr.internal.gl3.ColorBufferGL3
+import kotlin.math.sin
 
-class SyphonServer(val name: String = "OPENRNDR", var target: RenderTarget? = null): Extension {
+
+class SyphonServer(private val name: String = "OPENRNDR", var target: RenderTarget? = null): Extension {
     override var enabled = true
-    val server = JSyphonServer()
-
+    private val server = JSyphonServer()
 
     override fun setup(program: Program) {
         server.initWithName(name)
@@ -38,7 +38,7 @@ class SyphonServer(val name: String = "OPENRNDR", var target: RenderTarget? = nu
         server.publishFrameTexture(
             glBuffer.texture, glBuffer.target, 0, 0,
             program.width, program.height, program.width, program.height, false
-        );
+        )
     }
 
     override fun shutdown(program: Program) {
@@ -49,6 +49,12 @@ class SyphonServer(val name: String = "OPENRNDR", var target: RenderTarget? = nu
 
 
 
+
+
+
+
+
+
 fun main() = application {
     configure {
         width = 768
@@ -56,7 +62,7 @@ fun main() = application {
     }
 
     program {
-        extend(SyphonServer())
+        extend(SyphonServer("Blah"))
 
         extend {
             drawer.background(ColorRGBa.RED)
