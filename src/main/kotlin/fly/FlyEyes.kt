@@ -1,6 +1,7 @@
+package fly
+
 import org.openrndr.Program
 import org.openrndr.application
-import org.openrndr.color.ColorRGBa
 import org.openrndr.draw.ColorBuffer
 import org.openrndr.draw.loadImage
 import org.openrndr.extra.olive.Olive

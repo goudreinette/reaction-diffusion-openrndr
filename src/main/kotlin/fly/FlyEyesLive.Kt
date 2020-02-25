@@ -1,9 +1,8 @@
-@file:Suppress("UNUSED_LAMBDA_EXPRESSION")
-import org.openrndr.Program
+
+package fly
 import org.openrndr.draw.*
 import org.openrndr.extra.fx.blur.BoxBlur
 import org.openrndr.extra.compositor.*
-import org.openrndr.extra.fx.blend.*
 import org.openrndr.extra.gui.*
 
 { program: FlyEyes ->

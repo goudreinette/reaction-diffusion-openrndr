@@ -17,10 +17,11 @@ val panelVersion = if (panelUseSnapshot) "0.4.0-SNAPSHOT" else "0.3.21"
 val orxUseSnapshot = false
 val orxVersion = if (orxUseSnapshot) "0.4.0-SNAPSHOT" else "0.3.47"
 
-// supported features are: orx-camera, orx-compositor,orx-easing, orx-filter-extension,orx-file-watcher, orx-fx
-// orx-integral-image, orx-interval-tree, orx-jumpflood, orx-kinect-v1, orx-kdtree, orx-mesh-generators,orx-midi, orx-no-clear,
-// orx-noise, orx-obj, orx-olive, orx-osc, orx-palette, orx-runway
-val orxFeatures = setOf("orx-noise", "orx-fx", "orx-olive", "orx-runway", "orx-compositor", "orx-shade-styles", "orx-gui")
+// supported features are:
+val orxFeatures = setOf("orx-noise", "orx-fx", "orx-olive", "orx-runway", "orx-compositor", "orx-shade-styles", "orx-gui",
+    "orx-camera", "orx-compositor","orx-easing", "orx-filter-extension","orx-file-watcher", "orx-integral-image",
+    "orx-interval-tree", "orx-jumpflood", "orx-kinect-v1", "orx-kdtree", "orx-mesh-generators", "orx-midi",
+    "orx-no-clear", "orx-obj-loader", "orx-osc", "orx-palette")
 
 // supported features are: video, panel
 val openrndrFeatures = setOf("video", "panel")
@@ -212,7 +213,7 @@ dependencies {
     }
 
     if ("orx-kinect-v1" in orxFeatures) {
-        runtimeOnly("orx-kinect-v1")
+//        runtimeOnly("orx-kinect-v1")
     }
 
     if ("orx-olive" in orxFeatures) {

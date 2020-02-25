@@ -1,3 +1,5 @@
+package `reaction-diffusion`
+
 import org.openrndr.Program
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa

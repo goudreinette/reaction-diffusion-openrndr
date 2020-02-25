@@ -1,4 +1,6 @@
 @file:Suppress("UNUSED_LAMBDA_EXPRESSION")
+
+package `reaction-diffusion`
 import org.openrndr.Program
 import org.openrndr.color.ColorRGBa
 import org.openrndr.draw.*

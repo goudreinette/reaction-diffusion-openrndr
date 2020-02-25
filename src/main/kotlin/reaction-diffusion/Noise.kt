@@ -1,3 +1,5 @@
+package `reaction-diffusion`
+
 import org.openrndr.draw.Filter
 import org.openrndr.draw.filterShaderFromCode
 
