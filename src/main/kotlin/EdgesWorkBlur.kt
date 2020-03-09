@@ -6,10 +6,7 @@ import org.openrndr.extra.compositor.compose
 import org.openrndr.extra.compositor.draw
 import org.openrndr.extra.compositor.layer
 import org.openrndr.extra.compositor.post
-import org.openrndr.extra.fx.blur.GaussianBlur
 import org.openrndr.extra.fx.edges.EdgesWork
-import org.openrndr.extra.gui.GUI
-import org.openrndr.extra.gui.addTo
 import org.openrndr.ffmpeg.ScreenRecorder
 import org.openrndr.math.clamp
 import org.openrndr.math.map
@@ -22,7 +19,6 @@ fun main() = application {
     }
 
     program {
-        val gui = GUI()
         val i = loadImage("data/images/pm5544.png")
         val ew = EdgesWork()
 
@@ -44,7 +40,6 @@ fun main() = application {
             }
         }
 
-//        extend(gui)
         extend(ScreenRecorder())
         extend {
             ew.radius = clamp(map(0.0, width.toDouble(), 1.0, 400.0, mouse.position.x), 1.0, 400.0).toInt()
