@@ -14,7 +14,7 @@ val openrndrVersion = if (openrndrUseSnapshot) "0.4.0-SNAPSHOT" else "0.3.39"
 val panelUseSnapshot = false
 val panelVersion = if (panelUseSnapshot) "0.4.0-SNAPSHOT" else "0.3.21"
 
-val orxUseSnapshot = false
+val orxUseSnapshot = true
 val orxVersion = if (orxUseSnapshot) "0.4.0-SNAPSHOT" else "0.3.47"
 
 // supported features are:
