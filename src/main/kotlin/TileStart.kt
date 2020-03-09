@@ -1,5 +1,33 @@
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
+import org.openrndr.draw.Drawer
+import org.openrndr.draw.isolatedWithTarget
+import org.openrndr.draw.renderTarget
+import org.openrndr.extensions.Screenshots
+import org.openrndr.extra.compositor.compose
+import org.openrndr.extra.compositor.draw
+import org.openrndr.extra.compositor.layer
+import org.openrndr.extra.compositor.post
+import org.openrndr.extra.fx.edges.EdgesWork
+import org.openrndr.math.clamp
+import org.openrndr.math.map
+
+
+fun Drawer.drawGrid() {
+    val f = width / 9.0
+
+    for (x in 0 until 9) {
+        fill = if (x % 2 == 0) ColorRGBa.BLACK else ColorRGBa.WHITE
+        rectangle(f * x.toDouble(), -f + f / 8, f, f)
+        rectangle(f * x.toDouble(), height - f / 8, f, f)
+    }
+
+    for (y in 0 until 9) {
+        fill = if (y % 2 == 0) ColorRGBa.BLACK else ColorRGBa.WHITE
+        rectangle(0.0, f * y.toDouble(), f / 8, f)
+        rectangle(width - f / 8, f * y.toDouble(), f / 8, f)
+    }
+}
 
 
 fun main() = application {
@@ -8,27 +36,45 @@ fun main() = application {
         height = 800
     }
 
-    fun grid(stepsX: Int, stepsY: Int, w: Int, h: Int, fn: (Int, Int, Double, Double) -> Unit) {
-        for (x in 0 until stepsX) {
-            for (y in 0 until stepsY) {
-                fn(x, y, w / stepsX.toDouble(), w/stepsY.toDouble())
+    program {
+        drawer.apply {
+            strokeWeight = 0.0
+            stroke = ColorRGBa.TRANSPARENT
+        }
+
+        val ew = EdgesWork()
+
+        val rt = renderTarget(width, height) {
+            colorBuffer()
+        }
+
+        val c = compose {
+            layer {
+                draw {
+                    drawer.image(rt.colorBuffer(0))
+                }
+
+                post(ew)
             }
         }
-    }
 
-    program {
-        val f = width / 9.0
+        extend(Screenshots())
         extend {
-            for (x in 0 until 9) {
-                drawer.fill = if (x % 2 == 0) ColorRGBa.BLACK else ColorRGBa.WHITE
-                drawer.rectangle(f * x.toDouble(), 0.0, f, f)
-                drawer.rectangle(f * x.toDouble(), height - f, f, f)
-            }
+            ew.radius = clamp(map(0.0, width.toDouble(), 10.0, 800.0, mouse.position.x), 10.0, 400.0).toInt()
 
-            for (y in 0 until 9) {
-                drawer.fill = if (y % 2 == 0) ColorRGBa.BLACK else ColorRGBa.WHITE
-                drawer.rectangle(0.0, f * y.toDouble(), f, f)
-                drawer.rectangle(width - f, f * y.toDouble(), f, f)
+            drawer.apply {
+                isolatedWithTarget(rt) {
+                    drawGrid()
+
+                    c.draw(drawer)
+
+                    drawer.apply {
+                        strokeWeight = 0.0
+                        stroke = ColorRGBa.TRANSPARENT
+                    }
+                }
+
+                drawer.image(rt.colorBuffer(0))
             }
         }
     }

@@ -8,7 +8,7 @@ version = "0.3.9"
 val applicationMainClass = "TemplateProgramKt"
 
 
-val openrndrUseSnapshot = false
+val openrndrUseSnapshot = true
 val openrndrVersion = if (openrndrUseSnapshot) "0.4.0-SNAPSHOT" else "0.3.39"
 
 val panelUseSnapshot = false
