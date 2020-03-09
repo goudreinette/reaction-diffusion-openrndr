@@ -19,7 +19,7 @@ val orxVersion = if (orxUseSnapshot) "0.4.0-SNAPSHOT" else "0.3.47"
 
 // supported features are:
 val orxFeatures = setOf("orx-noise", "orx-fx", "orx-olive", "orx-runway", "orx-compositor", "orx-shade-styles", "orx-gui",
-    "orx-camera", "orx-compositor","orx-easing", "orx-filter-extension","orx-file-watcher", "orx-integral-image",
+    "orx-camera", "orx-compositor","orx-easing", "orx-filter-extension","orx-file-watcher", "orx-integral-image", "orx-image-fit",
     "orx-interval-tree", "orx-jumpflood", "orx-kinect-v1", "orx-kdtree", "orx-mesh-generators", "orx-midi",
     "orx-no-clear", "orx-obj-loader", "orx-osc", "orx-palette")
 
