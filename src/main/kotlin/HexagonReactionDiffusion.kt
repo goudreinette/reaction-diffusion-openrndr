@@ -6,6 +6,8 @@ import org.openrndr.extra.compositor.*
 import org.openrndr.extra.fx.antialias.FXAA
 import org.openrndr.extra.fx.blend.Multiply
 import org.openrndr.extra.fx.edges.EdgesWork
+import org.openrndr.extra.temporalblur.TemporalBlur
+import org.openrndr.ffmpeg.ScreenRecorder
 import org.openrndr.math.clamp
 import org.openrndr.math.map
 import org.openrndr.poissonfill.PoissonFill
@@ -61,7 +63,8 @@ fun main() = application {
             post(FXAA())
         }
 
-//        extend(ScreenRecorder())
+        extend(ScreenRecorder())
+        extend(TemporalBlur())
         extend {
             ew.radius = clamp(map(0.0, width.toDouble(), 10.0, 800.0, mouse.position.x), 10.0, 400.0).toInt()
             c2.draw(drawer)
