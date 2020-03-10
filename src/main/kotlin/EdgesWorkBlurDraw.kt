@@ -54,8 +54,6 @@ fun main() = application {
 
 //        extend(ScreenRecorder())
         extend {
-
-
             ew.radius = map(-1.0, 1.0, 14.0, 400.0, sin(seconds / 10)).toInt()
 
             drawer.isolatedWithTarget(rt) {

@@ -48,9 +48,9 @@ fun main() = application {
             drawer.fill = ColorRGBa.TRANSPARENT
             drawer.stroke = ColorRGBa.WHITE
 
-            drawer.hexagon(drawer.bounds.center, 350.0, HexagonRotation.Pointy)
-//            drawer.hexagon(drawer.bounds.center , 100.0, HexagonRotation.Pointy)
-//            drawer.hexagon(drawer.bounds.center - Vector2(175.0, 0.0), 100.0, HexagonRotation.Pointy)
+            drawer.hexagon(drawer.bounds.center, 350.0, HexagonRotation.Pointy, seconds)
+            drawer.hexagon(drawer.bounds.center, 350.0, HexagonRotation.Pointy, seconds - .25)
+            drawer.hexagon(drawer.bounds.center, 350.0, HexagonRotation.Pointy, seconds - .5)
 
             drawer.circle(drawer.bounds.center, 350.0)
         }
