@@ -4,7 +4,6 @@ import org.openrndr.extra.compositor.compose
 import org.openrndr.extra.compositor.draw
 import org.openrndr.extra.compositor.layer
 import org.openrndr.extra.compositor.post
-import org.openrndr.math.Vector2
 import org.openrndr.poissonfill.PoissonFill
 import kotlin.math.sin
 
