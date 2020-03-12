@@ -43,7 +43,7 @@ fun main() = application {
             }
         }
 
-        extend(Screenshots())
+//        extend(Screenshots())
         extend {
             ew.radius = clamp(map(0.0, width.toDouble(), 10.0, 800.0, mouse.position.x), 10.0, 400.0).toInt()
 
