@@ -1,13 +1,11 @@
-package `reaction-diffusion`
+package reaction_diffusion
 
-import org.openrndr.Program
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
 import org.openrndr.draw.Filter
 import org.openrndr.draw.filterShaderFromCode
 import org.openrndr.draw.isolatedWithTarget
 import org.openrndr.draw.renderTarget
-import org.openrndr.extra.olive.Olive
 import org.openrndr.shape.Circle
 
 /**

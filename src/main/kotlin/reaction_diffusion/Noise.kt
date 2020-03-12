@@ -1,4 +1,4 @@
-package `reaction-diffusion`
+package reaction_diffusion
 
 import org.openrndr.draw.Filter
 import org.openrndr.draw.filterShaderFromCode
