@@ -14,10 +14,8 @@ import org.openrndr.text.Writer
 import kotlin.and
 import kotlin.math.round
 
+
 class VectorControl : Element(ElementType("vector")) {
-
-    var label: String = "OK"
-
     class VectorControlEvent(val source: VectorControl)
     class Events(val clicked: PublishSubject<VectorControlEvent> = PublishSubject.create())
 
@@ -51,7 +49,7 @@ class VectorControl : Element(ElementType("vector")) {
         get() = 200.0
 
 
-     override fun draw(drawer: Drawer) {
+    override fun draw(drawer: Drawer) {
         computedStyle.let {
             drawer.pushTransforms()
             drawer.pushStyle()
@@ -71,7 +69,6 @@ class VectorControl : Element(ElementType("vector")) {
         }
     }
 }
-
 
 
 fun main() = application {
@@ -103,7 +100,7 @@ fun main() = application {
 //            }
             and(has state "hover") {
                 display = Display.BLOCK
-                background  = Color.RGBa(ColorRGBa.GRAY.shade(1.5))
+                background = Color.RGBa(ColorRGBa.GRAY.shade(1.5))
             }
         })
 
