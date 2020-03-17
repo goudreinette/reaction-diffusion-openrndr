@@ -3,10 +3,7 @@ package vector_control
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
 import org.openrndr.panel.ControlManager
-import org.openrndr.panel.elements.button
-import org.openrndr.panel.elements.layout
-import org.openrndr.panel.elements.vector2
-import org.openrndr.panel.elements.Vector2Control
+import org.openrndr.panel.elements.*
 import org.openrndr.panel.style.*
 
 
@@ -19,14 +16,15 @@ fun main() = application {
     program {
         val cm = ControlManager()
         var bgColor = ColorRGBa.BLACK
-        var v: Vector2Control? = null
+        var pp: PlanarPad? = null
 
         cm.body = layout(cm) {
-            v = vector2 {
+            pp = planarPad {
                 minX = 0.0
                 maxX = width.toDouble()
                 minY = 0.0
                 maxY = height.toDouble()
+                precision = 3
             }
 
             button {
@@ -37,7 +35,7 @@ fun main() = application {
         extend(cm)
         extend {
             drawer.background(bgColor)
-            drawer.circle(v!!.value, 50.0)
+            drawer.circle(pp!!.value, 50.0)
         }
     }
 }
