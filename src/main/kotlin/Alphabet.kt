@@ -28,9 +28,10 @@ fun main() = application {
     program {
         val upperCase = ('A'..'Z').joinToString(separator = " ")
         val lowerCase = ('a'..'z').joinToString(separator = " ")
-        val numbers = ('0'..'9').joinToString(separator = " ")
+        val numbers = "` ` `  " //  " : ; < = > ? @ [ \\ ] ^ _ ` { | } ~ " // "! \" # $ % & ' ( ) *  + , - /"
+//        val numbers = ('0'..'9').joinToString(separator = " ")
 
-        var f = loadFont("data/fonts/neue plak text bold.ttf", 320.0)
+        var f = loadFont("data/fonts/neue plak text bold.ttf", 500.0)
         val g = GUI()
 
         val s = object {
@@ -40,8 +41,8 @@ fun main() = application {
             @BooleanParameter("Numbers")
             var showNumbers = true
 
-            @DoubleParameter("Font Size", 10.0, 320.0)
-            var fontSize = 320.0
+            @DoubleParameter("Font Size", 10.0, 500.0)
+            var fontSize = 284.6
 
             @ActionParameter("Update font size")
             fun updateFontSize() {
@@ -68,7 +69,7 @@ fun main() = application {
                     drawer.fill = ColorRGBa.WHITE
 
                     writer {
-                        box = Rectangle(300.0, 200.0, width.toDouble() - 350.0, height.toDouble())
+                        box = Rectangle(270.0, 170.0, width.toDouble() - 350.0, height.toDouble())
                         leading = 0.0
 
                         text(if (s.showNumbers) numbers else (if (s.showUpperCase) upperCase else lowerCase))
@@ -91,7 +92,6 @@ fun main() = application {
 
         extend(g)
         extend(Screenshots())
-        extend(ScreenRecorder())
         extend {
             drawer.fontMap = f
             drawer.stroke = null
