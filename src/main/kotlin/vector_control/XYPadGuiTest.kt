@@ -4,7 +4,7 @@ import org.openrndr.application
 import org.openrndr.extra.gui.GUI
 import org.openrndr.extra.parameters.ActionParameter
 import org.openrndr.extra.parameters.Description
-import org.openrndr.extra.parameters.Vector2Parameter
+import org.openrndr.extra.parameters.XYParameter
 import org.openrndr.math.Vector2
 
 fun main() = application {
@@ -17,7 +17,7 @@ fun main() = application {
         val gui = GUI()
 
         val settings = @Description("Vector parameter!") object {
-            @Vector2Parameter("Position", 0.0, 0.0, 800.0, 800.0)
+            @XYParameter("Position", 0.0, 0.0, 800.0, 800.0, 2, true, true)
             var position: Vector2 = Vector2(0.0,0.0)
 
             @ActionParameter("Test")

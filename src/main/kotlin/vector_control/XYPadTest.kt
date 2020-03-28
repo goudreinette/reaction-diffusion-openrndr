@@ -16,15 +16,16 @@ fun main() = application {
     program {
         val cm = ControlManager()
         var bgColor = ColorRGBa.BLACK
-        var pp: PlanarPad? = null
+        var pp: XYPad? = null
 
         cm.body = layout(cm) {
-            pp = planarPad {
+            pp = xyPad {
                 minX = 0.0
                 maxX = width.toDouble()
                 minY = 0.0
                 maxY = height.toDouble()
                 precision = 3
+                showVector = true
             }
 
             button {

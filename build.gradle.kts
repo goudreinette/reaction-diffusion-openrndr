@@ -2,22 +2,13 @@ import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
-
+/* the name of this project, default is the template version but you are free to change these */
 group = "org.openrndr.template"
-version = "0.3.9"
+version = "0.3.11"
+
 val applicationMainClass = "TemplateProgramKt"
 
-
-val openrndrUseSnapshot = true
-val openrndrVersion = if (openrndrUseSnapshot) "0.4.0-SNAPSHOT" else "0.3.39"
-
-val panelUseSnapshot = true
-val panelVersion = if (panelUseSnapshot) "0.4.0-SNAPSHOT" else "0.3.21"
-
-val orxUseSnapshot = true
-val orxVersion = if (orxUseSnapshot) "0.4.0-SNAPSHOT" else "0.3.47"
-
-// supported features are:
+/*  Which additional (ORX) libraries should be added to this project. */
 val orxFeatures = setOf(
     "orx-camera",
     "orx-compositor",
@@ -49,15 +40,24 @@ val orxFeatures = setOf(
     "orx-shapes",
     "orx-syphon",
     "orx-temporal-blur",
-    "orx-kinect-v1"
+    "orx-kinect-v1",
+    "orx-panel"
 )
 
+/* Which OPENRNDR libraries should be added to this project? */
+val openrndrFeatures = setOf(
+    "panel",
+    "video"
+)
 
-// supported features are: video, panel
-val openrndrFeatures = setOf("video", "panel")
+/*  Which version of OPENRNDR, ORX and Panel should be used? */
+val openrndrUseSnapshot = false
+val openrndrVersion = if (openrndrUseSnapshot) "0.4.0-SNAPSHOT" else "0.3.40"
 
-// --------------------------------------------------------------------------------------------------------------------
+val orxUseSnapshot = false
+val orxVersion = if (orxUseSnapshot) "0.4.0-SNAPSHOT" else "0.3.50"
 
+//<editor-fold desc="This is code for OPENRNDR, no need to edit this .. most of the times">
 val supportedPlatforms = setOf("windows", "macos", "linux-x64", "linux-arm64")
 
 val openrndrOs = if (project.hasProperty("targetPlatform")) {
@@ -77,6 +77,7 @@ val openrndrOs = if (project.hasProperty("targetPlatform")) {
     }
     else -> throw IllegalArgumentException("os not supported")
 }
+//</editor-fold>
 
 enum class Logging {
     NONE,
@@ -84,18 +85,19 @@ enum class Logging {
     FULL
 }
 
-val applicationLogging = Logging.SIMPLE
+/*  What type of logging should this project use? */
+val applicationLogging = Logging.FULL
 
-val kotlinVersion = "1.3.61"
+val kotlinVersion = "1.3.71"
 
 plugins {
     java
-    kotlin("jvm") version ("1.3.61")
+    kotlin("jvm") version ("1.3.71")
 }
 
 repositories {
     mavenCentral()
-    if (openrndrUseSnapshot || orxUseSnapshot || panelUseSnapshot) {
+    if (openrndrUseSnapshot || orxUseSnapshot) {
         mavenLocal()
     }
     maven(url = "https://dl.bintray.com/openrndr/openrndr")
@@ -117,93 +119,16 @@ fun DependencyHandler.orxNatives(module: String): Any {
     return "org.openrndr.extra:$module-natives-$openrndrOs:$orxVersion"
 }
 
-val lwjglVersion = "3.2.3"
-val lwjglNatives = "natives-macos"
-
-
 dependencies {
-    implementation(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
 
-    implementation("org.lwjgl:lwjgl:$lwjglVersion")
-    implementation("org.lwjgl:lwjgl-glfw:$lwjglVersion")
-    implementation("org.lwjgl:lwjgl-jemalloc:$lwjglVersion")
-    implementation("org.lwjgl:lwjgl-openal:$lwjglVersion")
-    implementation("org.lwjgl:lwjgl-opengl:$lwjglVersion")
-    implementation("org.lwjgl:lwjgl-stb:$lwjglVersion")
-    implementation("org.lwjgl:lwjgl-egl:$lwjglVersion")
-    implementation("org.lwjgl:lwjgl-tinyexr:$lwjglVersion")
-    implementation("org.lwjgl:lwjgl")
-    implementation("org.lwjgl:lwjgl-assimp")
-    implementation("org.lwjgl:lwjgl-bgfx")
-    implementation("org.lwjgl:lwjgl-cuda")
-    implementation("org.lwjgl:lwjgl-egl")
-    implementation("org.lwjgl:lwjgl-glfw")
-    implementation("org.lwjgl:lwjgl-jawt")
-    implementation("org.lwjgl:lwjgl-jemalloc")
-    implementation("org.lwjgl:lwjgl-libdivide")
-    implementation("org.lwjgl:lwjgl-llvm")
-    implementation("org.lwjgl:lwjgl-lmdb")
-    implementation("org.lwjgl:lwjgl-lz4")
-    implementation("org.lwjgl:lwjgl-meow")
-    implementation("org.lwjgl:lwjgl-nanovg")
-    implementation("org.lwjgl:lwjgl-nfd")
-    implementation("org.lwjgl:lwjgl-nuklear")
-    implementation("org.lwjgl:lwjgl-odbc")
-    implementation("org.lwjgl:lwjgl-openal")
-    implementation("org.lwjgl:lwjgl-opencl")
-    implementation("org.lwjgl:lwjgl-opengl")
-    implementation("org.lwjgl:lwjgl-opengles")
-    implementation("org.lwjgl:lwjgl-openvr")
-    implementation("org.lwjgl:lwjgl-opus")
-    implementation("org.lwjgl:lwjgl-par")
-    implementation("org.lwjgl:lwjgl-remotery")
-    implementation("org.lwjgl:lwjgl-rpmalloc")
-    implementation("org.lwjgl:lwjgl-shaderc")
-    implementation("org.lwjgl:lwjgl-sse")
-    implementation("org.lwjgl:lwjgl-stb")
-    implementation("org.lwjgl:lwjgl-tinyexr")
-    implementation("org.lwjgl:lwjgl-tinyfd")
-    implementation("org.lwjgl:lwjgl-tootle")
-    implementation("org.lwjgl:lwjgl-vma")
-    implementation("org.lwjgl:lwjgl-vulkan")
-    implementation("org.lwjgl:lwjgl-xxhash")
-    implementation("org.lwjgl:lwjgl-yoga")
-    implementation("org.lwjgl:lwjgl-zstd")
-    runtimeOnly("org.lwjgl:lwjgl::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-assimp::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-bgfx::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-glfw::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-jemalloc::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-libdivide::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-llvm::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-lmdb::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-lz4::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-meow::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-nanovg::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-nfd::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-nuklear::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-openal::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-opengl::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-opengles::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-openvr::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-opus::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-par::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-remotery::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-rpmalloc::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-shaderc::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-sse::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-stb::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-tinyexr::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-tinyfd::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-tootle::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-vma::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-vulkan::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-xxhash::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-yoga::$lwjglNatives")
-    runtimeOnly("org.lwjgl:lwjgl-zstd::$lwjglNatives")
+    /*  This is where you add additional (third-party) dependencies */
 
-    implementation(openrndr("gl3"))
-    implementation(openrndrNatives("gl3"))
+//    implementation("org.jsoup:jsoup:1.12.2")
+//    implementation("com.google.code.gson:gson:2.8.6")
+
+    //<editor-fold desc="Managed dependencies">
+    runtimeOnly(openrndr("gl3"))
+    runtimeOnly(openrndrNatives("gl3"))
     implementation(openrndr("openal"))
     runtimeOnly(openrndrNatives("openal"))
     implementation(openrndr("core"))
@@ -212,21 +137,20 @@ dependencies {
     implementation(openrndr("extensions"))
     implementation(openrndr("filter"))
 
-    implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.3.3")
-
-    implementation("io.github.microutils", "kotlin-logging", "1.7.8")
+    implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.3.5")
+    implementation("io.github.microutils", "kotlin-logging", "1.7.9")
 
     when (applicationLogging) {
         Logging.NONE -> {
-            runtimeOnly("org.slf4j", "slf4j-nop", "1.7.29")
+            runtimeOnly("org.slf4j", "slf4j-nop", "1.7.30")
         }
         Logging.SIMPLE -> {
-            runtimeOnly("org.slf4j", "slf4j-simple", "1.7.29")
+            runtimeOnly("org.slf4j", "slf4j-simple", "1.7.30")
         }
         Logging.FULL -> {
-            runtimeOnly("org.apache.logging.log4j", "log4j-slf4j-impl", "2.13.0")
-            runtimeOnly("com.fasterxml.jackson.core", "jackson-databind", "2.10.1")
-            runtimeOnly("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", "2.10.1")
+            runtimeOnly("org.apache.logging.log4j", "log4j-slf4j-impl", "2.13.1")
+            runtimeOnly("com.fasterxml.jackson.core", "jackson-databind", "2.10.3")
+            runtimeOnly("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", "2.10.3")
         }
     }
 
@@ -235,16 +159,12 @@ dependencies {
         runtimeOnly(openrndrNatives("ffmpeg"))
     }
 
-    if ("panel" in openrndrFeatures) {
-        implementation("org.openrndr.panel:openrndr-panel:$panelVersion")
-    }
-
     for (feature in orxFeatures) {
         implementation(orx(feature))
     }
 
     if ("orx-kinect-v1" in orxFeatures) {
-//        runtimeOnly("orx-kinect-v1")
+        runtimeOnly(orxNatives("orx-kinect-v1"))
     }
 
     if ("orx-olive" in orxFeatures) {
@@ -253,6 +173,7 @@ dependencies {
 
     implementation(kotlin("stdlib-jdk8"))
     testImplementation("junit", "junit", "4.12")
+    //</editor-fold>
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -265,6 +186,7 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks.withType<Jar> {
+    isZip64 = true
     manifest {
         attributes["Main-Class"] = applicationMainClass
     }
@@ -276,7 +198,6 @@ tasks.withType<Jar> {
     exclude(listOf("META-INF/*.RSA", "META-INF/*.SF", "META-INF/*.DSA", "**/module-info*"))
     archiveFileName.set("application-$openrndrOs.jar")
 }
-
 
 tasks.create("zipDistribution", Zip::class.java) {
     archiveFileName.set("application-$openrndrOs.zip")
