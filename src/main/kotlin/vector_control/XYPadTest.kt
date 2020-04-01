@@ -3,8 +3,10 @@ package vector_control
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
 import org.openrndr.panel.ControlManager
-import org.openrndr.panel.elements.*
-import org.openrndr.panel.style.*
+import org.openrndr.panel.elements.XYPad
+import org.openrndr.panel.elements.button
+import org.openrndr.panel.elements.layout
+import org.openrndr.panel.elements.xyPad
 
 
 fun main() = application {
